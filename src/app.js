@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-var margin = {
+const margin = {
     top: 20,
     right: 30,
     bottom: 30,
@@ -13,7 +13,6 @@ var y = d3.scaleLinear()
     .range([height, 0]);
 
 var x = d3.scaleBand()
-    .domain(["A", "B", "C", "D", "E", "F"])
     .rangeRound([0, width])
     .padding(0.1);
 
@@ -34,13 +33,9 @@ var yAxis = d3.axisLeft()
     .ticks(10, "%");
 
 
-d3.tsv("/data/sample.tsv", type, function (error, data) {
-    x.domain(data.map(function (d) {
-        return d.name;
-    }))
-    y.domain([0, d3.max(data, function (d) {
-        return d.value;
-    })]);
+d3.tsv("/data/sample.tsv", type,  (error, data) => {
+    x.domain(data.map (d => d.name))
+    y.domain([0, d3.max(data,  d => d.value)]);
 
     chart.append("g")
         .attr("class", "x axis")
@@ -62,23 +57,18 @@ d3.tsv("/data/sample.tsv", type, function (error, data) {
     var bar = chart.selectAll("g")
         .data(data)
         .enter().append("g")
-        .attr("transform", function (d, i) {
-            return "translate(" + x(d.name) + ",0)";
-        });
+        .attr("transform",  (d, i) => "translate(" + x(d.name) + ",0)");
 
     chart.selectAll(".bar")
         .data(data)
         .enter().append("rect")
         .attr("class", "bar")
-        .attr("x", function (d) {
-            return x(d.name);
-        })
-        .attr("y", function (d) {
-            return y(d.value);
-        })
-        .attr("height", function (d) {
-            return height - y(d.value);
-        })
+        .attr("x",  d => 
+             x(d.name)
+        )
+        .attr("y",  d => y(d.value)
+        )
+        .attr("height",  d => height - y(d.value) )
         .attr("width", x.bandwidth());
 });
 
