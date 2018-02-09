@@ -19,7 +19,7 @@ var x = d3.scaleLinear()
 .range([0, width]);
 
 var y = d3.scaleBand()
-.rangeRound([0, width])
+.rangeRound([0,height])
 .padding(0.2);
 
 
@@ -43,7 +43,22 @@ d3.tsv("/data/sample.tsv", type,  (error, data) => {
     x.domain(d3.extent(data, d => d.value)).nice();
     y.domain(data.map(d => d.name));
 
-    chart.append("g")
+    chart.selectAll(".bar")
+        .data(data)
+        .enter().append("rect")
+        .attr("class", d => {
+            console.log(d.value);
+            return "bar bar--" + (d.value < 0 ? "negative":"positive");
+        })
+        .attr("x",  d => x(Math.min(0, d.value))
+        )
+        .attr("y",  d => 
+             y(d.name)
+        )    
+        .attr("height", y.bandwidth() )
+        .attr("width", d => Math.abs(x(d.value) - x(0)));
+
+        chart.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
@@ -52,22 +67,6 @@ d3.tsv("/data/sample.tsv", type,  (error, data) => {
         .attr("class", "y axis")
         .attr("transform", "translate(" + x(0) + ", 0)")
         .call(yAxis);
-        
-
-    chart.selectAll(".bar")
-        .data(data)
-        .enter().append("rect")
-        .attr("class", d => {
-            console.log(d.value);
-            return "bar bar--" + (d.value < 0 ? "negative":"positive");
-        })
-        .attr("y",  d => 
-             y(d.name)
-        )
-        .attr("x",  d => Math.min(0, d.value)
-        )
-        .attr("height", y.bandwidth() )
-        .attr("width", d => Math.abs(x(d.value) - x(0)));
 });
 
 function type(d) {
