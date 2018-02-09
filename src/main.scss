@@ -1,5 +1,9 @@
-.bar {
+.bar--positive {
     fill: steelblue;
+  }
+
+  .bar--negative {
+    fill: darkorange;
   }
   
   .axis text {
@@ -13,6 +17,3 @@
     shape-rendering: crispEdges;
   }
   
-  .x.axis path {
-    display: none;
-  }

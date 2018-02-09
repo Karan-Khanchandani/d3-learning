@@ -1,1 +1,1 @@
-.bar{fill:#4682b4}.axis text{font:10px sans-serif}.axis line,.axis path{fill:none;stroke:#000;shape-rendering:crispEdges}.x.axis path{display:none}
+.bar--positive{fill:#4682b4}.bar--negative{fill:#ff8c00}.axis text{font:10px sans-serif}.axis line,.axis path{fill:red;stroke:#000;shape-rendering:crispEdges}

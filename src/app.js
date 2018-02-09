@@ -3,19 +3,24 @@ import * as d3 from 'd3';
 const margin = {
     top: 20,
     right: 30,
-    bottom: 30,
-    left: 40
+    bottom: 40,
+    left: 30
 },
 width = 960 - margin.left - margin.right,
 height = 500 - margin.top - margin.bottom;
 
-var y = d3.scaleLinear()
-    .range([height, 0]);
+// var y = d3.scaleLinear()
+//     .range([height, 0]);
 
-var x = d3.scaleBand()
-    .rangeRound([0, width])
-    .padding(0.1);
+// var x = d3.scaleBand()
+//     .rangeRound([0, width])
+//     .padding(0.1);
+var x = d3.scaleLinear()
+.range([0, width]);
 
+var y = d3.scaleBand()
+.rangeRound([0, width])
+.padding(0.2);
 
 
 
@@ -30,12 +35,13 @@ var xAxis = d3.axisBottom()
 
 var yAxis = d3.axisLeft()
     .scale(y)
-    .ticks(10, "%");
+    .tickSize(0)
+    .tickPadding(6);
 
 
 d3.tsv("/data/sample.tsv", type,  (error, data) => {
-    x.domain(data.map (d => d.name))
-    y.domain([0, d3.max(data,  d => d.value)]);
+    x.domain(d3.extent(data, d => d.value)).nice();
+    y.domain(data.map(d => d.name));
 
     chart.append("g")
         .attr("class", "x axis")
@@ -44,32 +50,24 @@ d3.tsv("/data/sample.tsv", type,  (error, data) => {
 
     chart.append("g")
         .attr("class", "y axis")
-        .call(yAxis)
-        .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text("Frequency");
-
-    var barWidth = width / data.length;
-
-    var bar = chart.selectAll("g")
-        .data(data)
-        .enter().append("g")
-        .attr("transform",  (d, i) => "translate(" + x(d.name) + ",0)");
+        .attr("transform", "translate(" + x(0) + ", 0)")
+        .call(yAxis);
+        
 
     chart.selectAll(".bar")
         .data(data)
         .enter().append("rect")
-        .attr("class", "bar")
-        .attr("x",  d => 
-             x(d.name)
+        .attr("class", d => {
+            console.log(d.value);
+            return "bar bar--" + (d.value < 0 ? "negative":"positive");
+        })
+        .attr("y",  d => 
+             y(d.name)
         )
-        .attr("y",  d => y(d.value)
+        .attr("x",  d => Math.min(0, d.value)
         )
-        .attr("height",  d => height - y(d.value) )
-        .attr("width", x.bandwidth());
+        .attr("height", y.bandwidth() )
+        .attr("width", d => Math.abs(x(d.value) - x(0)));
 });
 
 function type(d) {
