@@ -62,7 +62,6 @@ d3.select(".randomize")
 function change(data) {
 
     /* ------- PIE SLICES -------*/
-    debugger;
     var slice = svg.select(".slices").selectAll("path.slice")
         .data(pie(data), key);
 
@@ -77,6 +76,7 @@ function change(data) {
         .transition().duration(1000)
         .attrTween("d", function (d) {
             this._current = this._current || d;
+            debugger;
             var interpolate = d3.interpolate(this._current, d);
             this._current = interpolate(0);
             return function (t) {
@@ -154,3 +154,4 @@ function change(data) {
 };
 
 change(randomData());
+
