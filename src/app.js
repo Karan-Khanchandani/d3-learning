@@ -41,12 +41,14 @@ d3.csv("data/sample.csv", type, (err, data) => {
 
     var values = data.filter(d => d.symbol == "AMZN");
    
-    var msft = data.filter(d => d.symbol = "MSFT");
+    var msft = data.filter(d => d.symbol == "MSFT");
 
     var ibm = data.filter(d => d.symbol == "IBM");
 
+    console.log(values, msft, ibm);
+
     x.domain([values[0].date, values[values.length - 1].date]);
-    y.domain([0, d3.max(data, d => d.price)]).nice();
+    y.domain([0, d3.max(values, d => d.price)]).nice();
 
     svg.append("clipPath")
         .attr("id", "clip")
